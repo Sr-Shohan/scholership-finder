@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { ExternalLink, Share2, Calendar, FileCheck, Info, Clock, AlertTriangle, CheckCircle2 } from "lucide-react";
 
 interface Scholarship {
   id: string;
@@ -84,66 +85,180 @@ export default function ClientDetailActions({
 
   return (
     <>
+      <style dangerouslySetInnerHTML={{__html: `
+        .countdown-premium {
+          background: linear-gradient(135deg, #001a14 0%, #004d39 100%);
+          border: 1px solid rgba(255,255,255,0.1);
+          border-radius: var(--radius-2xl);
+          padding: var(--space-6);
+          color: white;
+          margin-bottom: var(--space-5);
+          text-align: center;
+          box-shadow: var(--shadow-xl);
+          position: relative;
+          overflow: hidden;
+        }
+
+        .countdown-premium::before {
+          content: '';
+          position: absolute;
+          top: -50%; left: -50%; width: 200%; height: 200%;
+          background: radial-gradient(circle at center, rgba(52, 199, 89, 0.1) 0%, transparent 60%);
+          pointer-events: none;
+        }
+
+        .time-box-premium {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          background: rgba(255,255,255,0.05);
+          border: 1px solid rgba(255,255,255,0.1);
+          border-radius: var(--radius-lg);
+          padding: 8px;
+          min-width: 60px;
+        }
+
+        .time-value-premium {
+          font-size: var(--text-xl);
+          font-weight: 800;
+          color: #34C759;
+          font-variant-numeric: tabular-nums;
+        }
+
+        .time-label-premium {
+          font-size: 10px;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+          color: rgba(255,255,255,0.5);
+          font-weight: 700;
+        }
+
+        .action-card-premium {
+          background: var(--card-bg);
+          border: 1px solid var(--border-color);
+          border-radius: var(--radius-2xl);
+          padding: var(--space-6);
+          margin-bottom: var(--space-5);
+          box-shadow: var(--shadow-md);
+        }
+
+        .sidebar-btn {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+          padding: 14px;
+          border-radius: var(--radius-xl);
+          font-size: var(--text-sm);
+          font-weight: 700;
+          transition: all 0.2s;
+          margin-bottom: var(--space-3);
+          cursor: pointer;
+        }
+
+        .btn-apply {
+          background: var(--color-primary);
+          color: white;
+          border: none;
+          box-shadow: 0 8px 16px -4px rgba(0, 106, 78, 0.3);
+        }
+
+        .btn-apply:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 12px 20px -4px rgba(0, 106, 78, 0.4);
+        }
+
+        .btn-secondary-action {
+          background: var(--bg-secondary);
+          border: 1.5px solid var(--border-color);
+          color: var(--text-primary);
+        }
+
+        .btn-secondary-action:hover {
+          background: var(--bg-primary);
+          border-color: var(--color-primary);
+        }
+
+        .info-row-premium {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 10px 0;
+          border-bottom: 1px solid var(--border-color);
+        }
+
+        .info-row-premium:last-child {
+          border-bottom: none;
+        }
+      `}} />
+
       {/* Countdown Card */}
-      <div className="countdown-card" style={{ background: 'linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%)', borderRadius: 'var(--radius-2xl)', padding: 'var(--space-5)', color: 'white', marginBottom: 'var(--space-5)', textAlign: 'center' }}>
-        <h4 style={{ color: 'rgba(255,255,255,0.8)', fontSize: 'var(--text-sm)', marginBottom: 'var(--space-4)', fontWeight: 'var(--font-semibold)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>⏰ Deadline Countdown</h4>
+      <div className="countdown-premium">
+        <h4 style={{ fontSize: 'var(--text-xs)', opacity: 0.8, marginBottom: 'var(--space-4)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+          <Clock size={14} /> Deadline Countdown
+        </h4>
         
         {isPast ? (
-          <p style={{ color: 'rgba(255,255,255,0.8)' }}>This deadline has passed.</p>
+          <div style={{ padding: 'var(--space-2)' }}>
+            <AlertTriangle className="text-danger" style={{ margin: '0 auto var(--space-2)' }} size={32} />
+            <p style={{ fontWeight: 700, fontSize: 'var(--text-lg)' }}>Deadline Passed</p>
+            <p style={{ opacity: 0.6, fontSize: 'var(--text-xs)' }}>Stay tuned for the next cycle.</p>
+          </div>
         ) : (
-          <div className="countdown-timer" style={{ display: 'flex', justifyContent: 'center', gap: 'var(--space-3)' }}>
-            <div className="countdown-box"><div className="countdown-number">{timeLeft?.d ?? '--'}</div><div className="countdown-label">Days</div></div>
-            <div className="countdown-box"><div className="countdown-number">{timeLeft?.h ?? '--'}</div><div className="countdown-label">Hours</div></div>
-            <div className="countdown-box"><div className="countdown-number">{timeLeft?.m ?? '--'}</div><div className="countdown-label">Mins</div></div>
-            <div className="countdown-box"><div className="countdown-number">{timeLeft?.s ?? '--'}</div><div className="countdown-label">Secs</div></div>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '8px' }}>
+            <div className="time-box-premium"><span className="time-value-premium">{timeLeft?.d ?? '--'}</span><span className="time-label-premium">Days</span></div>
+            <div className="time-box-premium"><span className="time-value-premium">{timeLeft?.h ?? '--'}</span><span className="time-label-premium">Hrs</span></div>
+            <div className="time-box-premium"><span className="time-value-premium">{timeLeft?.m ?? '--'}</span><span className="time-label-premium">Min</span></div>
+            <div className="time-box-premium"><span className="time-value-premium">{timeLeft?.s ?? '--'}</span><span className="time-label-premium">Sec</span></div>
           </div>
         )}
-        <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: 'var(--text-xs)', marginTop: 'var(--space-3)' }}>
-          {scholarship.deadline}
-        </p>
+        <div style={{ marginTop: 'var(--space-4)', fontSize: '11px', opacity: 0.5, fontWeight: 600 }}>
+          Closing on {scholarship.deadline}
+        </div>
       </div>
 
       {/* Actions */}
-      <div className="sidebar-action-card" style={{ background: 'var(--card-bg)', border: '2px solid var(--color-primary)', borderRadius: 'var(--radius-2xl)', padding: 'var(--space-6)', marginBottom: 'var(--space-5)' }}>
-        <h3 style={{ fontSize: 'var(--text-lg)', marginBottom: 'var(--space-4)' }}>🚀 Quick Actions</h3>
-        <a href={scholarship.apply_link} target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{ width: '100%', marginBottom: 'var(--space-3)' }}>
-          Apply Now ↗
+      <div className="action-card-premium">
+        <h3 style={{ fontSize: 'var(--text-base)', fontWeight: 800, marginBottom: 'var(--space-5)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Info size={18} style={{ color: 'var(--color-primary)' }}/> Fast Actions
+        </h3>
+        
+        <a href={scholarship.apply_link} target="_blank" rel="noopener noreferrer" className="sidebar-btn btn-apply" style={{ textDecoration: 'none' }}>
+          <ExternalLink size={18} /> Apply Officially
         </a>
-        <button className="btn btn-outline" onClick={shareScholarship} style={{ width: '100%', marginBottom: 'var(--space-3)' }}>
-          📤 Share Scholarship
+        
+        <button className="sidebar-btn btn-secondary-action" onClick={shareScholarship}>
+          <Share2 size={18} /> Share With Friends
         </button>
-        <button className="btn btn-outline" onClick={addToGoogleCalendar} style={{ width: '100%', marginBottom: 'var(--space-3)' }}>
-          📅 Add Deadline to Calendar
+        
+        <button className="sidebar-btn btn-secondary-action" onClick={addToGoogleCalendar}>
+          <Calendar size={18} /> Remind on Calendar
         </button>
-        <Link href={`/checklist?id=${scholarship.id}`} className="btn btn-outline" style={{ width: '100%' }}>
-          ✅ Full Checklist Generator
+        
+        <Link href={`/checklist?id=${scholarship.id}`} className="sidebar-btn btn-secondary-action" style={{ textDecoration: 'none', marginBottom: 0 }}>
+          <FileCheck size={18} /> Document Generator
         </Link>
       </div>
 
-      {/* Quick Info */}
-      <div className="detail-card" style={{ background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-2xl)', padding: 'var(--space-6)' }}>
-        <h3 style={{ fontSize: 'var(--text-base)', marginBottom: 'var(--space-4)' }}>📋 Quick Info</h3>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'var(--text-sm)' }}>
-            <span style={{ color: 'var(--text-muted)' }}>Opens</span>
-            <span style={{ fontWeight: 600 }}>{scholarship.deadline_opens}</span>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'var(--text-sm)' }}>
-            <span style={{ color: 'var(--text-muted)' }}>Deadline</span>
-            <span style={{ fontWeight: 600, color: daysLeft <= 30 ? 'var(--color-accent)' : 'var(--text-primary)' }}>{scholarship.deadline}</span>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'var(--text-sm)' }}>
-            <span style={{ color: 'var(--text-muted)' }}>Levels</span>
-            <span style={{ fontWeight: 600 }}>{scholarship.degrees.join(', ')}</span>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'var(--text-sm)' }}>
-            <span style={{ color: 'var(--text-muted)' }}>IELTS</span>
-            <span style={{ fontWeight: 600 }}>{scholarship.ielts_required ? 'Required' : scholarship.moi_accepted ? 'MOI OK' : 'Not Required'}</span>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'var(--text-sm)' }}>
-            <span style={{ color: 'var(--text-muted)' }}>Min CGPA</span>
-            <span style={{ fontWeight: 600 }}>{scholarship.min_cgpa} / 4.0</span>
-          </div>
+      {/* Quick Stats */}
+      <div className="action-card-premium">
+        <h3 style={{ fontSize: 'var(--text-base)', fontWeight: 800, marginBottom: 'var(--space-4)' }}>Snapshot</h3>
+        <div className="info-row-premium">
+          <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', fontWeight: 600 }}>Opens</span>
+          <span style={{ fontSize: 'var(--text-sm)', fontWeight: 700 }}>{scholarship.deadline_opens}</span>
+        </div>
+        <div className="info-row-premium">
+          <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', fontWeight: 600 }}>IELTS</span>
+          <span style={{ fontSize: 'var(--text-sm)', fontWeight: 700 }}>{scholarship.ielts_required ? 'Required' : 'Not Required'}</span>
+        </div>
+        <div className="info-row-premium">
+          <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', fontWeight: 600 }}>Min. GPA</span>
+          <span style={{ fontSize: 'var(--text-sm)', fontWeight: 700 }}>{scholarship.min_cgpa} / 4.0</span>
+        </div>
+        <div className="info-row-premium">
+          <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', fontWeight: 600 }}>MOI OK?</span>
+          <span style={{ fontSize: 'var(--text-sm)', fontWeight: 700, color: scholarship.moi_accepted ? 'var(--color-primary)' : 'inherit' }}>{scholarship.moi_accepted ? <><CheckCircle2 size={14} style={{ display: 'inline', marginRight: '4px' }}/> Yes</> : 'No'}</span>
         </div>
       </div>
     </>

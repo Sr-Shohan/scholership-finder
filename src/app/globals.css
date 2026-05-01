@@ -118,6 +118,11 @@
   --border-color: var(--color-gray-200);
   --card-bg: var(--color-white);
   --nav-bg: rgba(255,255,255,0.95);
+
+  /* Premium Design Tokens */
+  --hero-bg: linear-gradient(135deg, #001a14 0%, #006a4e 100%);
+  --hero-glow: radial-gradient(circle at center, rgba(52, 199, 89, 0.1) 0%, transparent 60%);
+  --emerald-accent: #34C759;
 }
 
 /* === Reset & Base === */
@@ -2359,3 +2364,165 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 
+
+/* === Mobile Bottom Navigation === */
+.mobile-bottom-nav-container {
+  display: none;
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 48px);
+  max-width: 500px;
+  z-index: 9999;
+}
+
+.mobile-bottom-nav {
+  background: rgba(18, 18, 18, 0.9);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 30px;
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+
+.mobile-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  flex: 1;
+}
+
+.mobile-nav-item span {
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.mobile-nav-item.active {
+  color: var(--emerald-accent); /* Using the site's primary emerald accent */
+}
+
+.mobile-nav-item:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+@media (max-width: 768px) {
+  .mobile-bottom-nav-container {
+    display: block;
+  }
+}
+
+@media (max-width: 480px) {
+  .mobile-bottom-nav-container {
+    width: calc(100% - 32px);
+    bottom: 16px;
+  }
+  .mobile-bottom-nav {
+    padding: 10px 15px;
+  }
+}
+
+/* === iPhone 15 & Modern Mobile Optimizations === */
+:root {
+  --safe-area-inset-bottom: env(safe-area-inset-bottom, 20px);
+}
+
+body {
+  /* Prevent content from being hidden behind the floating mobile nav */
+  padding-bottom: 100px;
+}
+
+@media (min-width: 769px) {
+  body {
+    padding-bottom: 0;
+  }
+}
+
+/* Mobile Typography & Layout Tweak for iPhone 15 */
+@media (max-width: 430px) {
+  .container {
+    padding: 0 20px;
+  }
+  
+  h1 {
+    font-size: clamp(1.75rem, 8vw, 2.25rem) !important;
+  }
+
+  .section {
+    padding: var(--space-12) 0;
+  }
+
+  /* Ensure the floating nav accounts for the iPhone home indicator */
+  .mobile-bottom-nav-container {
+    bottom: calc(var(--safe-area-inset-bottom) + 8px);
+  }
+}
+
+/* Fix for overlapping buttons in checklist/finder on small screens */
+.btn {
+  width: auto;
+  min-width: unset;
+}
+
+@media (max-width: 480px) {
+  .btn-lg {
+    width: 100%;
+  }
+}
+
+/* Final Polish for iPhone 15 UX */
+@media (max-width: 395px) {
+  /* iPhone 15 specific tweaks */
+  .navbar-logo .logo-text {
+    font-size: 1.25rem;
+  }
+  
+  .badge {
+    font-size: 10px;
+    padding: 2px 8px;
+  }
+  
+  .card {
+    padding: var(--space-4);
+  }
+
+  .premium-hero {
+    padding-top: calc(var(--nav-height) + var(--space-12));
+    padding-bottom: var(--space-16);
+  }
+
+  /* Reduce gap in checklist items for more space */
+  .checklist-items-grid {
+    gap: var(--space-2);
+  }
+  
+  .checklist-item-card {
+    padding: var(--space-3);
+  }
+}
+
+/* Fix for possible horizontal scrolling on small devices */
+html, body {
+  width: 100%;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Ensure images don't break layouts */
+img {
+  height: auto !important;
+}
+
+/* Smooth scrolling for anchor links */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 100px; /* Offset for sticky nav */
+}

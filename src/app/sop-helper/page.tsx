@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import scholarshipsData from "@/data/scholarships.json";
+import { PenTool, CheckCircle2, ChevronRight, ChevronLeft, Copy, Printer, Lightbulb, AlertTriangle, FileText, Sparkles } from "lucide-react";
 
 export default function SopHelperPage() {
   const [step, setStep] = useState(1);
@@ -16,9 +17,10 @@ export default function SopHelperPage() {
     whyCountry: "",
     whyUni: "",
     futureGoal: "",
-    bdImpact: "" // BD-specific impact
+    bdImpact: ""
   });
   const [errors, setErrors] = useState<Record<string, boolean>>({});
+  const [copied, setCopied] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -32,7 +34,6 @@ export default function SopHelperPage() {
     if (currentStep === 1) {
       if (!formData.name) newErrors.name = true;
       if (!formData.field) newErrors.field = true;
-      if (!formData.university) newErrors.university = true;
     } else if (currentStep === 2) {
       if (!formData.academicBg) newErrors.academicBg = true;
     } else if (currentStep === 3) {
@@ -63,196 +64,322 @@ export default function SopHelperPage() {
     const text = document.getElementById('sopOutputText')?.innerText;
     if (text) {
       await navigator.clipboard.writeText(text);
-      alert("✅ Copied to clipboard!");
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
     }
   };
 
   return (
-    <>
-      <header className="page-header print-hide">
-        <div className="container page-header-content">
-          <span className="section-label" style={{ marginBottom: 'var(--space-4)' }}>Write a Winning Essay</span>
-          <h1>✍️ SOP Outline Generator</h1>
-          <p>Answer a few questions to generate a customized, 5-paragraph Statement of Purpose structure designed to avoid common BD student mistakes.</p>
+    <main role="main">
+      <style dangerouslySetInnerHTML={{__html: `
+        .sop-hero-premium {
+          background: linear-gradient(135deg, #001a14 0%, #006a4e 100%);
+          padding: calc(var(--nav-height) + var(--space-20)) 0 var(--space-24);
+          color: white;
+          text-align: center;
+          position: relative;
+        }
+
+        .sop-card-premium {
+          background: var(--card-bg);
+          border: 1px solid var(--border-color);
+          border-radius: var(--radius-2xl);
+          padding: var(--space-8);
+          box-shadow: var(--shadow-xl);
+          margin-bottom: var(--space-10);
+        }
+
+        .step-pill-premium {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 900;
+          font-size: 14px;
+          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+          z-index: 2;
+          position: relative;
+        }
+
+        .premium-input-sop {
+          width: 100%;
+          background: var(--bg-secondary);
+          border: 2px solid var(--border-color);
+          padding: 14px 18px;
+          border-radius: var(--radius-xl);
+          font-size: var(--text-base);
+          transition: all 0.2s;
+          color: var(--text-primary);
+        }
+
+        .premium-input-sop:focus {
+          border-color: var(--color-primary);
+          background: white;
+          outline: none;
+          box-shadow: 0 0 0 4px var(--color-primary-ultra-light);
+        }
+
+        .premium-textarea-sop {
+          width: 100%;
+          background: var(--bg-secondary);
+          border: 2px solid var(--border-color);
+          padding: 16px 18px;
+          border-radius: var(--radius-xl);
+          font-size: var(--text-base);
+          transition: all 0.2s;
+          color: var(--text-primary);
+          line-height: 1.6;
+          resize: vertical;
+        }
+
+        .premium-textarea-sop:focus {
+          border-color: var(--color-primary);
+          background: white;
+          outline: none;
+          box-shadow: 0 0 0 4px var(--color-primary-ultra-light);
+        }
+
+        .sop-paper-preview {
+          background: white;
+          border: 1px solid var(--border-color);
+          border-radius: var(--radius-lg);
+          padding: 60px;
+          box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+          font-family: 'Inter', serif;
+          line-height: 1.8;
+          color: #1a1a1a;
+          position: relative;
+          max-width: 800px;
+          margin: 0 auto;
+        }
+
+        .sop-paper-preview::before {
+          content: '';
+          position: absolute;
+          top: 0; left: 0; right: 0; height: 10px;
+          background: var(--color-primary);
+        }
+
+        .mistake-list-item {
+          display: flex;
+          gap: 12px;
+          padding: 12px;
+          border-radius: 12px;
+          transition: background 0.2s;
+        }
+
+        .mistake-list-item:hover {
+          background: rgba(255, 59, 48, 0.05);
+        }
+      `}} />
+
+      <header className="sop-hero-premium">
+        <div className="container">
+          <div className="badge" style={{ background: '#34C759', color: 'white', padding: '6px 16px', marginBottom: 'var(--space-6)', fontWeight: 800 }}>
+             <Sparkles size={14} style={{ marginRight: '6px', verticalAlign: 'middle' }} /> AI-POWERED OUTLINER
+          </div>
+          <h1 style={{ fontSize: 'clamp(2.5rem, 6vw, 4rem)', fontWeight: 900, marginBottom: 'var(--space-4)', letterSpacing: '-0.03em' }}>
+            Write Your <span style={{ color: '#34C759' }}>Winning</span> SOP
+          </h1>
+          <p style={{ maxWidth: '700px', margin: '0 auto', color: 'rgba(255,255,255,0.8)', fontSize: 'var(--text-lg)' }}>
+            Guidance designed by successful scholars to help Bangladeshi students avoid common pitfalls and impress admissions committees.
+          </p>
         </div>
       </header>
 
-      <section className="section-sm">
+      <section className="section" style={{ marginTop: '-80px', paddingBottom: 'var(--space-20)' }}>
         <div className="container">
           
-          <div className="sop-layout" style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 300px', gap: 'var(--space-8)', alignItems: 'start' }}>
-            <main role="main" className="sop-main">
-              
-              <div className="sop-progress print-hide" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 'var(--space-8)', position: 'relative' }}>
-                <div style={{ position: 'absolute', top: '15px', left: '0', right: '0', height: '4px', background: 'var(--border-color)', zIndex: 1 }}></div>
-                <div style={{ position: 'absolute', top: '15px', left: '0', width: `${((step - 1) / 4) * 100}%`, height: '4px', background: 'var(--color-primary)', zIndex: 1, transition: 'width 0.3s ease' }}></div>
-                
-                {[1,2,3,4,5].map(i => (
-                  <div key={i} className={`step-indicator ${step >= i ? 'active' : ''}`} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', zIndex: 2, position: 'relative', width: '20%' }}>
-                    <div style={{ width: '34px', height: '34px', borderRadius: '50%', background: step >= i ? 'var(--color-primary)' : 'var(--bg-secondary)', border: `2px solid ${step >= i ? 'var(--color-primary)' : 'var(--border-color)'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: step >= i ? 'white' : 'var(--text-muted)', fontWeight: 'bold', fontSize: '14px', marginBottom: '8px', transition: 'all 0.3s ease' }}>{i}</div>
-                    <span style={{ fontSize: '12px', color: step >= i ? 'var(--text-primary)' : 'var(--text-muted)', fontWeight: step >= i ? 600 : 400, textAlign: 'center' }}>
-                      {i===1 ? 'Intro' : i===2 ? 'Academic' : i===3 ? 'Why?' : i===4 ? 'Goals' : 'Result'}
-                    </span>
-                  </div>
-                ))}
+          <div className="grid-layout" style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 'var(--space-10)', alignItems: 'start' }}>
+            
+            <main>
+              {/* Progress UI */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 'var(--space-12)', position: 'relative', padding: '0 var(--space-4)' }}>
+                 <div style={{ position: 'absolute', top: '20px', left: '0', right: '0', height: '4px', background: 'var(--border-color)', zIndex: 1, borderRadius: '2px' }}></div>
+                 <div style={{ position: 'absolute', top: '20px', left: '0', width: `${((step - 1) / 4) * 100}%`, height: '4px', background: 'var(--color-primary)', zIndex: 1, transition: 'width 0.6s cubic-bezier(0.4, 0, 0.2, 1)', borderRadius: '2px' }}></div>
+                 
+                 {[1, 2, 3, 4, 5].map(i => (
+                   <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+                      <div className="step-pill-premium" style={{ 
+                        background: step > i ? 'var(--color-primary)' : step === i ? 'var(--color-primary)' : 'white',
+                        border: `2px solid ${step >= i ? 'var(--color-primary)' : 'var(--border-color)'}`,
+                        color: step > i ? 'white' : step === i ? 'white' : 'var(--text-muted)',
+                        boxShadow: step === i ? '0 0 20px rgba(0,106,78,0.3)' : 'none'
+                      }}>
+                        {step > i ? '✓' : i}
+                      </div>
+                      <span style={{ fontSize: '11px', fontWeight: 800, color: step >= i ? 'var(--text-primary)' : 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                        {i===1 ? 'Intro' : i===2 ? 'Academic' : i===3 ? 'Motivation' : i===4 ? 'Impact' : 'Preview'}
+                      </span>
+                   </div>
+                 ))}
               </div>
 
-              <div className="sop-form-container print-hide">
+              {/* Form Content */}
+              <div className="sop-card-premium fade-in-up">
                 {step === 1 && (
-                  <div className="sop-step fade-in-up">
-                    <h2 style={{ fontSize: 'var(--text-xl)', marginBottom: 'var(--space-6)' }}>Step 1: The Basics (Introduction)</h2>
-                    <p style={{ color: 'var(--text-secondary)', marginBottom: 'var(--space-4)', fontSize: 'var(--text-sm)' }}>💡 Avoid jumping straight into your childhood. The committee reads 1000s of essays. Start with a hook about the field.</p>
+                  <div>
+                    <h2 style={{ fontSize: 'var(--text-xl)', fontWeight: 900, marginBottom: 'var(--space-2)' }}>The Foundation</h2>
+                    <p style={{ color: 'var(--text-muted)', marginBottom: 'var(--space-8)', fontSize: 'var(--text-sm)' }}>Hook the committee with a professional introduction.</p>
                     
-                    <div className="form-group">
-                      <label className="form-label">Full Name</label>
-                      <input type="text" className={`form-input ${errors.name ? 'error' : ''}`} name="name" value={formData.name} onChange={handleInputChange} placeholder="e.g. Rahul Islam" />
-                      {errors.name && <div className="error-text" style={{ color: 'var(--color-accent)', fontSize: '12px', marginTop: '4px' }}>This field is required</div>}
+                    <div className="form-group" style={{ marginBottom: 'var(--space-6)' }}>
+                       <label style={{ fontSize: '13px', fontWeight: 800, marginBottom: '8px', display: 'block', color: 'var(--text-primary)' }}>FULL NAME</label>
+                       <input type="text" name="name" className="premium-input-sop" value={formData.name} onChange={handleInputChange} placeholder="As per your passport" />
+                       {errors.name && <div style={{ color: '#FF3B30', fontSize: '11px', marginTop: '6px', fontWeight: 700 }}>Name is required</div>}
+                    </div>
+                    <div className="form-group" style={{ marginBottom: 'var(--space-6)' }}>
+                       <label style={{ fontSize: '13px', fontWeight: 800, marginBottom: '8px', display: 'block', color: 'var(--text-primary)' }}>TARGET PROGRAM</label>
+                       <input type="text" name="field" className="premium-input-sop" value={formData.field} onChange={handleInputChange} placeholder="e.g. Master's in Artificial Intelligence" />
                     </div>
                     <div className="form-group">
-                      <label className="form-label">Target Degree & Field</label>
-                      <input type="text" className={`form-input ${errors.field ? 'error' : ''}`} name="field" value={formData.field} onChange={handleInputChange} placeholder="e.g. Master's in Data Science" />
-                    </div>
-                    <div className="form-group">
-                      <label className="form-label">Target University (Optional, use if applying to one)</label>
-                      <input type="text" className={`form-input ${errors.university ? 'error' : ''}`} name="university" value={formData.university} onChange={handleInputChange} placeholder="e.g. University of Debrecen" />
-                    </div>
-                    <div className="form-group">
-                      <label className="form-label">Target Scholarship (if applicable)</label>
-                      <select className="form-select" name="scholarshipInfo" value={formData.scholarshipInfo} onChange={handleInputChange}>
-                        <option value="">General SOP (No specific scholarship)</option>
-                        {scholarshipsData.map(s => <option key={s.id} value={s.name}>{s.name} ({s.country})</option>)}
-                      </select>
+                       <label style={{ fontSize: '13px', fontWeight: 800, marginBottom: '8px', display: 'block', color: 'var(--text-primary)' }}>TARGET SCHOLARSHIP</label>
+                       <select name="scholarshipInfo" className="premium-input-sop" value={formData.scholarshipInfo} onChange={handleInputChange}>
+                          <option value="">General Application</option>
+                          {scholarshipsData.map(s => <option key={s.id} value={s.name}>{s.name}</option>)}
+                       </select>
                     </div>
                   </div>
                 )}
 
                 {step === 2 && (
-                  <div className="sop-step fade-in-up">
-                    <h2 style={{ fontSize: 'var(--text-xl)', marginBottom: 'var(--space-6)' }}>Step 2: Academic Background</h2>
-                    <p style={{ color: 'var(--text-secondary)', marginBottom: 'var(--space-4)', fontSize: 'var(--text-sm)' }}>💡 Don't just list courses from your transcript. Focus on a specific project, thesis, or problem you solved in BD.</p>
+                  <div>
+                    <h2 style={{ fontSize: 'var(--text-xl)', fontWeight: 900, marginBottom: 'var(--space-2)' }}>Academic Pedigree</h2>
+                    <p style={{ color: 'var(--text-muted)', marginBottom: 'var(--space-8)', fontSize: 'var(--text-sm)' }}>Demonstrate your technical depth and research potential.</p>
                     
-                    <div className="form-group">
-                      <label className="form-label">What is your current/past academic background?</label>
-                      <textarea className={`form-textarea ${errors.academicBg ? 'error' : ''}`} name="academicBg" value={formData.academicBg} onChange={handleInputChange} rows={3} placeholder="e.g. I completed my B.Sc. in CSE from BUET..."></textarea>
+                    <div className="form-group" style={{ marginBottom: 'var(--space-6)' }}>
+                       <label style={{ fontSize: '13px', fontWeight: 800, marginBottom: '8px', display: 'block', color: 'var(--text-primary)' }}>ACADEMIC BACKGROUND</label>
+                       <textarea name="academicBg" className="premium-textarea-sop" rows={3} value={formData.academicBg} onChange={handleInputChange} placeholder="Major projects, CGPA highlights, or key courses..."></textarea>
                     </div>
                     <div className="form-group">
-                      <label className="form-label">What was your thesis/major project? What impact did it have?</label>
-                      <textarea className="form-textarea" name="thesis" value={formData.thesis} onChange={handleInputChange} rows={4} placeholder="e.g. My thesis focused on identifying crop diseases using CNNs specifically tailored for Bangladeshi farmers..."></textarea>
+                       <label style={{ fontSize: '13px', fontWeight: 800, marginBottom: '8px', display: 'block', color: 'var(--text-primary)' }}>MAJOR PROJECTS / THESIS</label>
+                       <textarea name="thesis" className="premium-textarea-sop" rows={4} value={formData.thesis} onChange={handleInputChange} placeholder="Describe a specific problem you solved during your undergrad in BD..."></textarea>
                     </div>
                   </div>
                 )}
 
                 {step === 3 && (
-                  <div className="sop-step fade-in-up">
-                    <h2 style={{ fontSize: 'var(--text-xl)', marginBottom: 'var(--space-6)' }}>Step 3: Why This Program & Country?</h2>
-                    
-                    <div className="form-group">
-                      <label className="form-label">Why do you want to study in this specific country?</label>
-                      <textarea className={`form-textarea ${errors.whyCountry ? 'error' : ''}`} name="whyCountry" value={formData.whyCountry} onChange={handleInputChange} rows={3} placeholder="e.g. Japan leads in earthquake engineering..."></textarea>
+                  <div>
+                    <h2 style={{ fontSize: 'var(--text-xl)', fontWeight: 900, marginBottom: 'var(--space-2)' }}>Why This Program?</h2>
+                     <div className="form-group" style={{ marginBottom: 'var(--space-6)' }}>
+                       <label style={{ fontSize: '13px', fontWeight: 800, marginBottom: '8px', display: 'block', color: 'var(--text-primary)' }}>PROGRAM ALIGNMENT</label>
+                       <textarea name="whyUni" className="premium-textarea-sop" rows={3} value={formData.whyUni} onChange={handleInputChange} placeholder="Mention specific labs, professors, or curriculum strengths..."></textarea>
                     </div>
                     <div className="form-group">
-                      <label className="form-label">Why this university/scholarship?</label>
-                      <textarea className={`form-textarea ${errors.whyUni ? 'error' : ''}`} name="whyUni" value={formData.whyUni} onChange={handleInputChange} rows={3} placeholder="e.g. Professor XYZ's lab perfectly aligns with my interest in..."></textarea>
+                       <label style={{ fontSize: '13px', fontWeight: 800, marginBottom: '8px', display: 'block', color: 'var(--text-primary)' }}>WHY THIS DESTINATION?</label>
+                       <textarea name="whyCountry" className="premium-textarea-sop" rows={3} value={formData.whyCountry} onChange={handleInputChange} placeholder="e.g. Germany's industrial heritage or Hungary's research ecosystem..."></textarea>
                     </div>
                   </div>
                 )}
 
                 {step === 4 && (
-                  <div className="sop-step fade-in-up">
-                    <h2 style={{ fontSize: 'var(--text-xl)', marginBottom: 'var(--space-6)' }}>Step 4: Goals & BD Impact</h2>
-                    <p style={{ color: 'var(--text-secondary)', marginBottom: 'var(--space-4)', fontSize: 'var(--text-sm)' }}>⚠️ Crucial for BD Students: Show how this degree will help Bangladesh. Avoid saying "I want to settle abroad."</p>
-                    
-                    <div className="form-group">
-                      <label className="form-label">What are your immediate post-graduation goals?</label>
-                      <textarea className={`form-textarea ${errors.futureGoal ? 'error' : ''}`} name="futureGoal" value={formData.futureGoal} onChange={handleInputChange} rows={3} placeholder="e.g. I intend to pursue a PhD / return as a researcher in a BD policy institute..."></textarea>
+                  <div>
+                    <h2 style={{ fontSize: 'var(--text-xl)', fontWeight: 900, marginBottom: 'var(--space-2)' }}>Vision & Impact</h2>
+                    <p style={{ color: 'var(--text-muted)', marginBottom: 'var(--space-8)', fontSize: 'var(--text-sm)' }}>Crucial for funding: How will you help Bangladesh?</p>
+                     <div className="form-group" style={{ marginBottom: 'var(--space-6)' }}>
+                       <label style={{ fontSize: '13px', fontWeight: 800, marginBottom: '8px', display: 'block', color: 'var(--text-primary)' }}>SHORT-TERM CAREER GOALS</label>
+                       <textarea name="futureGoal" className="premium-textarea-sop" rows={3} value={formData.futureGoal} onChange={handleInputChange} placeholder="Research, industry roles, or entrepreneurship..."></textarea>
                     </div>
                     <div className="form-group">
-                      <label className="form-label">How will this help Bangladesh specifically? (The "Home Impact")</label>
-                      <textarea className={`form-textarea ${errors.bdImpact ? 'error' : ''}`} name="bdImpact" value={formData.bdImpact} onChange={handleInputChange} rows={3} placeholder="e.g. I plan to tackle Dhaka's traffic management using the ML techniques I will learn..."></textarea>
+                       <label style={{ fontSize: '13px', fontWeight: 800, marginBottom: '8px', display: 'block', color: 'var(--text-primary)' }}>CONTRIBUTION TO BANGLADESH</label>
+                       <textarea name="bdImpact" className="premium-textarea-sop" rows={4} value={formData.bdImpact} onChange={handleInputChange} placeholder="How will your chosen field solve a specific problem in BD (Economy, Health, Traffic)?"></textarea>
                     </div>
                   </div>
                 )}
 
                 {step === 5 && (
-                  <div className="sop-step fade-in-up">
-                    <div style={{ textAlign: 'center', padding: 'var(--space-8) 0' }}>
-                      <div style={{ fontSize: '4rem', marginBottom: 'var(--space-4)' }}>🎉</div>
-                      <h2 style={{ fontSize: 'var(--text-2xl)', marginBottom: 'var(--space-2)' }}>Your Outline is Ready!</h2>
-                      <p style={{ color: 'var(--text-secondary)', marginBottom: 'var(--space-6)' }}>Scroll down to copy your personalized SOP structure based on your inputs.</p>
-                      <button className="btn btn-primary btn-lg" onClick={() => window.scrollTo(0, document.body.scrollHeight)}>View Output ↓</button>
-                    </div>
+                  <div style={{ textAlign: 'center', padding: 'var(--space-4) 0' }}>
+                     <div style={{ background: 'rgba(52, 199, 89, 0.1)', width: '80px', height: '80px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto var(--space-6)' }}>
+                        <CheckCircle2 size={40} style={{ color: '#34C759' }} />
+                     </div>
+                     <h2 style={{ fontSize: 'var(--text-2xl)', fontWeight: 900, marginBottom: 'var(--space-2)' }}>Your Blueprint is Ready</h2>
+                     <p style={{ color: 'var(--text-muted)', marginBottom: 'var(--space-8)' }}>We've structured your thoughts into a professional scholarship essay format.</p>
+                     <button className="btn btn-primary" onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })}>
+                        Scroll to Output ↓
+                     </button>
                   </div>
                 )}
 
-                <div className="form-actions" style={{ display: 'flex', justifyContent: 'space-between', marginTop: 'var(--space-8)', borderTop: '1px solid var(--border-color)', paddingTop: 'var(--space-6)' }}>
-                  {step > 1 ? (
-                    <button className="btn btn-outline" onClick={prevStep}>← Previous</button>
-                  ) : <div></div>}
-                  {step < 5 && (
-                    <button className="btn btn-primary" onClick={nextStep}>Next Step →</button>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 'var(--space-10)', paddingTop: 'var(--space-6)', borderTop: '1px solid var(--border-color)' }}>
+                  <button onClick={prevStep} disabled={step === 1} className="btn btn-outline" style={{ opacity: step === 1 ? 0 : 1 }}>
+                    <ChevronLeft size={18} /> Previous
+                  </button>
+                  {step < 5 ? (
+                    <button onClick={nextStep} className="btn btn-primary">
+                      Next Step <ChevronRight size={18} />
+                    </button>
+                  ) : (
+                    <div style={{ width: '100px' }}></div>
                   )}
                 </div>
               </div>
 
               {step === 5 && (
-                <div className="sop-output fade-in-up" id="sopOutput" style={{ marginTop: 'var(--space-8)', background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-xl)', overflow: 'hidden' }}>
-                  <div style={{ padding: 'var(--space-4) var(--space-6)', background: 'var(--bg-secondary)', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <h3 style={{ margin: 0, fontSize: 'var(--text-base)' }}>📄 Generated Outline</h3>
-                    <div style={{ display: 'flex', gap: '8px' }}>
-                      <button className="btn btn-outline" style={{ padding: '6px 12px', fontSize: '12px' }} onClick={handleCopy}>📋 Copy Text</button>
-                      <button className="btn btn-outline" style={{ padding: '6px 12px', fontSize: '12px' }} onClick={() => window.print()}>🖨️ Print PDF</button>
-                    </div>
+                <div className="fade-in-up" id="sopOutput">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-6)' }}>
+                     <h2 style={{ fontWeight: 900, fontSize: 'var(--text-xl)' }}>Final Draft Outline</h2>
+                     <div style={{ display: 'flex', gap: '10px' }}>
+                        <button className="btn btn-outline" onClick={handleCopy}>
+                           {copied ? <><CheckCircle2 size={16}/> Copied</> : <><Copy size={16}/> Copy Text</>}
+                        </button>
+                        <button className="btn btn-primary" onClick={() => window.print()}>
+                           <Printer size={16}/> Print PDF
+                        </button>
+                     </div>
                   </div>
-                  <div className="sop-output-text" id="sopOutputText" style={{ padding: 'var(--space-6)', whiteSpace: 'pre-wrap', lineHeight: '1.8', color: 'var(--text-primary)', fontFamily: 'var(--font-body)', fontSize: 'var(--text-base)' }}>
-                    {/* Paragraph 1: Intro */}
-                    <strong>[Paragraph 1: The Hook & Introduction]</strong>{"\n"}
-                    The rapidly evolving landscape of [Broad Field] presents unique challenges and opportunities, particularly in developing nations like Bangladesh. It is with a profound desire to contribute to this field that I, {formData.name}, submit my application for the {formData.field} at {formData.university || '[University Name]'} {formData.scholarshipInfo ? `under the ${formData.scholarshipInfo}` : ''}.
-                    {"\n\n"}
-                    
-                    {/* Paragraph 2: Background */}
-                    <strong>[Paragraph 2: Academic & Professional Background]</strong>{"\n"}
-                    My academic journey has built a strong foundation. {formData.academicBg} During my studies, I encountered specific problems which led to my major project/thesis. {formData.thesis} This practical experience honed my analytical skills, but also highlighted the limitations of my current knowledge, motivating me to seek advanced education.
-                    {"\n\n"}
-
-                    {/* Paragraph 3: Why Them */}
-                    <strong>[Paragraph 3: Why This Program & Destination?]</strong>{"\n"}
-                    I am specifically drawn to {formData.university || '[University Name]'} because of {formData.whyUni} Furthermore, studying in {formData.whyCountry || '[Country]'} offers distinct advantages. {formData.whyCountry} The rigorous academic environment and exposure to international perspectives will be instrumental in bridging my knowledge gaps.
-                    {"\n\n"}
-
-                    {/* Paragraph 4: Future Goals & Home Impact */}
-                    <strong>[Paragraph 4: Career Goals & Impact on Bangladesh]</strong>{"\n"}
-                    Upon completion of this degree, my immediate objective is to {formData.futureGoal} Ultimately, I am committed to returning to Bangladesh to apply my expertise. {formData.bdImpact} I firmly believe that this program will empower me to be a catalyst for change in my home country.
-                    {"\n\n"}
-
-                    {/* Paragraph 5: Conclusion */}
-                    <strong>[Paragraph 5: Conclusion]</strong>{"\n"}
-                    In conclusion, I am confident that my academic rigor, coupled with a deep sense of purpose, makes me an ideal candidate for this program. I am eager to bring my unique perspectives from Bangladesh to your diverse classroom while absorbing the invaluable knowledge your institution provides.
+                  <div className="sop-paper-preview" id="sopOutputText">
+                     <p style={{ marginBottom: '30px', fontWeight: 700 }}>[Paragraph 1: Professional Hook & Intent]</p>
+                     <p>The academic pursuit of {formData.field} represents more than just a degree; it is a vital step toward addressing systemic challenges in Bangladesh. I, {formData.name}, am writing to formally express my interest in enrolling at {formData.university || '[University Name]'} {formData.scholarshipInfo ? `under the prestigious ${formData.scholarshipInfo}` : ''}.</p>
+                     
+                     <p style={{ margin: '30px 0 10px', fontWeight: 700 }}>[Paragraph 2: Academic Foundations]</p>
+                     <p>My academic record reflects a consistent commitment to excellence. {formData.academicBg} This foundation was further solidified during my major research project. {formData.thesis} Through this, I developed the analytical rigor required for success in your program.</p>
+                     
+                     <p style={{ margin: '30px 0 10px', fontWeight: 700 }}>[Paragraph 3: Why This Institution?]</p>
+                     <p>Choosing {formData.university || '[University Name]'} was a deliberate decision. I am particularly impressed by {formData.whyUni} Additionally, the experience of studying in {formData.whyCountry || '[Country]'} will allow me to {formData.whyCountry} - providing a global perspective essential for my growth.</p>
+                     
+                     <p style={{ margin: '30px 0 10px', fontWeight: 700 }}>[Paragraph 4: Career Vison & Home Impact]</p>
+                     <p>Following the completion of my studies, my immediate objective is to {formData.futureGoal} Beyond personal career milestones, my primary motivation is to return to Bangladesh. {formData.bdImpact} I am determined to utilize the high-level expertise gained from your institution to solve real-world problems in my home country.</p>
+                     
+                     <p style={{ margin: '30px 0 10px', fontWeight: 700 }}>[Paragraph 5: Final Call to Action]</p>
+                     <p>In summary, I am ready to embrace the challenges of your rigorous academic environment. I look forward to contributing my unique Bangladeshi perspectives to your diverse student body while building the expertise required to drive progress in my field.</p>
                   </div>
                 </div>
               )}
             </main>
 
-            <aside className="sop-sidebar print-hide" style={{ display: 'none' }}>
-               {/* Mobile hiding logic via CSS is tricky inline, assume hidden on small screens */}
-            </aside>
-            <div className="desktop-sidebar" style={{ position: 'sticky', top: 'var(--space-4)' }}>
-               <div className="info-card" style={{ padding: 'var(--space-5)', background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-xl)' }}>
-                  <h3 style={{ fontSize: 'var(--text-lg)', borderBottom: '1px solid var(--border-color)', paddingBottom: 'var(--space-3)', marginBottom: 'var(--space-4)' }}>⚠️ 7 Fatal SOP Mistakes for BD Students</h3>
-                  <ul style={{ listStyle: 'none', padding: 0, margin: 0, fontSize: 'var(--text-sm)', display: 'flex', flexDirection: 'column', gap: 'var(--space-3)', color: 'var(--text-secondary)' }}>
-                    <li><strong style={{ color: 'var(--color-accent)' }}>1. The "Childhood Story":</strong> "Since I was 5 years old I loved computers..." - <em>Overused. Start with a professional hook.</em></li>
-                    <li><strong style={{ color: 'var(--color-accent)' }}>2. Plagiarism:</strong> Copying paragraphs from the internet. Universities use Turnitin.</li>
-                    <li><strong style={{ color: 'var(--color-accent)' }}>3. Summarizing the CV:</strong> Don't just list what you did. Explain <em>why</em> you did it.</li>
-                    <li><strong style={{ color: 'var(--color-accent)' }}>4. The "Settle Abroad" Vibe:</strong> Fully funded scholarships want you to help your home country. Emphasize returning.</li>
-                    <li><strong style={{ color: 'var(--color-accent)' }}>5. Over-flattery:</strong> "Your university is the most glorious in the universe..." - <em>Keep it professional.</em></li>
-                    <li><strong style={{ color: 'var(--color-accent)' }}>6. Vague Goals:</strong> "I want to help society." - <em>How? Be specific (e.g., "I want to improve the power grid efficiency in rural BD by 15%").</em></li>
-                    <li><strong style={{ color: 'var(--color-accent)' }}>7. Bad Formatting:</strong> Use size 11/12 font (Times/Arial), 1.5 line spacing, and max 2 pages.</li>
-                  </ul>
+            <aside style={{ position: 'sticky', top: 'calc(var(--nav-height) + var(--space-4))' }}>
+              <div className="sop-card-premium" style={{ padding: 'var(--space-6)' }}>
+                <h3 style={{ fontSize: 'var(--text-base)', fontWeight: 900, marginBottom: 'var(--space-6)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                   <Lightbulb size={18} style={{ color: 'var(--color-warning)' }} /> Expert Tips
+                </h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+                  <div className="mistake-list-item">
+                    <AlertTriangle size={16} style={{ color: '#FF3B30', flexShrink: 0, marginTop: '2px' }} />
+                    <div style={{ fontSize: '12px', lineHeight: 1.5 }}><strong>No "Childhood Stories":</strong> Avoid starting with "Since I was a child...". Start with a current professional challenge.</div>
+                  </div>
+                  <div className="mistake-list-item">
+                    <AlertTriangle size={16} style={{ color: '#FF3B30', flexShrink: 0, marginTop: '2px' }} />
+                    <div style={{ fontSize: '12px', lineHeight: 1.5 }}><strong>Emphasize Return:</strong> Funding committees want to see how you will help Bangladesh, not how you will settle abroad.</div>
+                  </div>
+                  <div className="mistake-list-item">
+                    <AlertTriangle size={16} style={{ color: '#FF3B30', flexShrink: 0, marginTop: '2px' }} />
+                    <div style={{ fontSize: '12px', lineHeight: 1.5 }}><strong>Be Specific:</strong> Instead of "I want to help poor people," say "I want to implement digital micro-finance models for rural weavers in Tangail."</div>
+                  </div>
                 </div>
-            </div>
-          </div>
+              </div>
 
+              <div style={{ background: 'linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%)', borderRadius: 'var(--radius-xl)', padding: 'var(--space-6)', color: 'white' }}>
+                 <FileText size={32} style={{ marginBottom: '12px', opacity: 0.5 }} />
+                 <h4 style={{ fontWeight: 800, marginBottom: '8px' }}>Need a Review?</h4>
+                 <p style={{ fontSize: '12px', opacity: 0.8, lineHeight: 1.5 }}>Join our community group to get your SOP peer-reviewed by successful scholars.</p>
+                 <button className="btn btn-white" style={{ width: '100%', marginTop: '16px', fontSize: '12px' }}>Join Community</button>
+              </div>
+            </aside>
+
+          </div>
         </div>
       </section>
-    </>
+    </main>
   );
 }
