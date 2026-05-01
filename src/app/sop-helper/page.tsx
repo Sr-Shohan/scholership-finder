@@ -80,6 +80,28 @@ export default function SopHelperPage() {
           position: relative;
         }
 
+        @media (max-width: 960px) {
+          .sop-hero-premium {
+            padding: calc(var(--nav-height) + var(--space-4)) 0 var(--space-8);
+          }
+          .sop-hero-premium h1 {
+            font-size: 2.125rem !important;
+          }
+          .sop-card-premium {
+            padding: var(--space-6);
+          }
+          .sop-paper-preview {
+            padding: 30px 20px !important;
+          }
+          .grid-layout-sop {
+            grid-template-columns: 1fr !important;
+            gap: var(--space-6) !important;
+          }
+          .step-label-sop {
+            display: none;
+          }
+        }
+
         .sop-card-premium {
           background: var(--card-bg);
           border: 1px solid var(--border-color);
@@ -192,7 +214,7 @@ export default function SopHelperPage() {
       <section className="section" style={{ marginTop: '-80px', paddingBottom: 'var(--space-20)' }}>
         <div className="container">
           
-          <div className="grid-layout" style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 'var(--space-10)', alignItems: 'start' }}>
+          <div className="grid-layout-sop" style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 'var(--space-10)', alignItems: 'start' }}>
             
             <main>
               {/* Progress UI */}
@@ -210,7 +232,7 @@ export default function SopHelperPage() {
                       }}>
                         {step > i ? '✓' : i}
                       </div>
-                      <span style={{ fontSize: '11px', fontWeight: 800, color: step >= i ? 'var(--text-primary)' : 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                      <span className="step-label-sop" style={{ fontSize: '11px', fontWeight: 800, color: step >= i ? 'var(--text-primary)' : 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                         {i===1 ? 'Intro' : i===2 ? 'Academic' : i===3 ? 'Motivation' : i===4 ? 'Impact' : 'Preview'}
                       </span>
                    </div>
