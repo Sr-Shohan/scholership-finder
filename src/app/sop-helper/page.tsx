@@ -82,7 +82,7 @@ export default function SopHelperPage() {
 
         @media (max-width: 960px) {
           .sop-hero-premium {
-            padding: calc(var(--nav-height) + var(--space-4)) 0 var(--space-8);
+            padding: calc(var(--nav-height) + var(--space-4)) 0 var(--space-16);
           }
           .sop-hero-premium h1 {
             font-size: 2.125rem !important;
@@ -99,6 +99,9 @@ export default function SopHelperPage() {
           }
           .step-label-sop {
             display: none;
+          }
+          .sop-content-wrap {
+            margin-top: 0 !important;
           }
         }
 
@@ -211,7 +214,7 @@ export default function SopHelperPage() {
         </div>
       </header>
 
-      <section className="section" style={{ marginTop: '-80px', paddingBottom: 'var(--space-20)' }}>
+      <section className="section sop-content-wrap" style={{ marginTop: '-80px', paddingBottom: 'var(--space-20)' }}>
         <div className="container">
           
           <div className="grid-layout-sop" style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 'var(--space-10)', alignItems: 'start' }}>

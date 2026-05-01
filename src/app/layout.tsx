@@ -169,6 +169,14 @@ export default function RootLayout({
               nav.classList.toggle('open');
             });
 
+            // Auto-close menu when link clicked
+            nav?.querySelectorAll('a').forEach(link => {
+              link.addEventListener('click', () => {
+                btn?.classList.remove('open');
+                nav?.classList.remove('open');
+              });
+            });
+
             // Back to top
             const btt = document.getElementById('backToTopBtn');
             window.addEventListener('scroll', () => {
