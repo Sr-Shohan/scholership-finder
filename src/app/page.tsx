@@ -1,8 +1,20 @@
+"use client";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import scholarships from "@/data/scholarships.json";
-import { Search, Clock, FileText, PenTool, CheckCircle2, XCircle, Timer, Globe2, AlertCircle, ArrowRight, ShieldCheck, Sparkles, GraduationCap, MapPin, ChevronRight } from "lucide-react";
+import { Search, Clock, FileText, PenTool, CheckCircle2, XCircle, Timer, Globe2, AlertCircle, ArrowRight, ShieldCheck, Sparkles, GraduationCap, MapPin, ChevronRight, Compass } from "lucide-react";
 
 export default function Home() {
+  const [placeholderIndex, setPlaceholderIndex] = useState(0);
+  const keywords = ["Germany", "Masters", "USA", "PhD", "Full Fund", "UK", "CSC", "Europe", "Italy", "Japan"];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPlaceholderIndex((prev) => (prev + 1) % keywords.length);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [keywords.length]);
+
   const stats = {
     total: scholarships.length,
     countries: new Set(scholarships.map((s) => s.country)).size,
@@ -36,14 +48,38 @@ export default function Home() {
 
         @media (max-width: 960px) {
           .premium-hero {
-            padding: calc(var(--nav-height) + var(--space-4)) 0 var(--space-8);
+            padding: calc(var(--nav-height) + var(--space-8)) 0 var(--space-8);
           }
           .hero-title-premium {
-            font-size: 2.25rem !important;
+            font-size: 2rem !important;
+            line-height: 1.1 !important;
           }
           .hero-subtitle-premium {
-            font-size: 0.95rem !important;
+            font-size: 0.9rem !important;
             margin-bottom: var(--space-6);
+            padding: 0 var(--space-4);
+          }
+          .hero-search-input-wrap {
+            padding: 0 var(--space-4);
+          }
+          .hero-search-input {
+            padding: 14px 105px 14px 54px !important;
+            font-size: 0.875rem !important;
+          }
+          .hero-search-icon-wrap {
+            left: 18px !important;
+          }
+          .hero-search-icon-wrap svg {
+            width: 18px !important;
+            height: 18px !important;
+          }
+          .hero-search-input::placeholder {
+            font-size: 0.85rem;
+          }
+          .hero-search-btn {
+            padding: 8px 16px !important;
+            font-size: 11px !important;
+            right: 8px !important;
           }
         }
 
@@ -144,7 +180,8 @@ export default function Home() {
           background: white;
           border-radius: var(--radius-2xl);
           border: 1px solid var(--border-color);
-          overflow: hidden;
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
           box-shadow: var(--shadow-xl);
         }
 
@@ -184,14 +221,54 @@ export default function Home() {
             The largest database of international scholarships specifically curated for BD students. 
             Includes IELTS mappings, MOI guides, and BD-specific sending partner info.
           </p>
-          <div className="fade-in-up" style={{ display: 'flex', justifyContent: 'center', gap: '20px', flexWrap: 'wrap' }}>
-            <Link href="/scholarships" className="btn btn-primary btn-lg" style={{ padding: '18px 36px', fontSize: 'var(--text-lg)', boxShadow: '0 10px 20px -5px rgba(0, 106, 78, 0.4)' }}>
-              <Search size={20} /> Explore Scholarships
-            </Link>
-            <Link href="/checklist" className="btn btn-white btn-lg" style={{ padding: '18px 36px', fontSize: 'var(--text-lg)' }}>
-              <FileText size={20} /> Generate Checklist
-            </Link>
-          </div>
+          <form action="/scholarships" method="GET" className="fade-in-up hero-search-input-wrap" style={{ maxWidth: '750px', margin: '0 auto', width: '100%', position: 'relative' }}>
+            <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+              <div className="hero-search-icon-wrap" style={{ position: 'absolute', left: '26px', color: 'var(--color-primary)', display: 'flex' }}>
+                <Search size={22} strokeWidth={2.5} />
+              </div>
+              <input 
+                type="text" 
+                name="q"
+                placeholder={`Search "${keywords[placeholderIndex]}"...`} 
+                className="hero-search-input"
+                style={{
+                  width: '100%',
+                  padding: '24px 140px 24px 64px',
+                  borderRadius: 'var(--radius-full)',
+                  border: '1px solid rgba(255,255,255,0.2)',
+                  background: 'white',
+                  fontSize: '1.125rem',
+                  color: '#001a14',
+                  boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                  outline: 'none',
+                  fontWeight: 500,
+                  fontFamily: 'var(--font-body)',
+                  transition: 'all 0.3s'
+                }}
+              />
+              <button 
+                type="submit"
+                className="btn btn-primary hero-search-btn"
+                style={{
+                  position: 'absolute',
+                  right: '10px',
+                  padding: '14px 32px',
+                  borderRadius: 'var(--radius-full)',
+                  fontSize: '14px',
+                  fontWeight: 900,
+                  letterSpacing: '0.05em',
+                  boxShadow: '0 4px 12px rgba(0,106,78,0.2)'
+                }}
+              >
+                FIND NOW
+              </button>
+            </div>
+            <div style={{ marginTop: 'var(--space-10)', display: 'flex', justifyContent: 'center' }}>
+               <Link href="/scholarships" className="fade-in-up" style={{ color: '#34C759', fontSize: '15px', textDecoration: 'none', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '10px', background: 'rgba(52, 199, 89, 0.1)', padding: '10px 24px', borderRadius: 'var(--radius-full)', border: '1px solid rgba(52, 199, 89, 0.2)', transition: 'all 0.3s' }}>
+                 <Compass size={18} /> EXPLORE ALL SCHOLARSHIPS <ArrowRight size={18} />
+               </Link>
+            </div>
+          </form>
         </div>
       </header>
 
